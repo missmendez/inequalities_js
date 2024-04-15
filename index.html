@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Drag & Drop 1–20</title>
+  <script src="./tsparticles.confetti.bundle.min.js"></script>
+  <script src="./app.js"></script>
+  <style>
+    @font-face {
+      font-family: 'comic';
+      src: url(./fonts/comic.woff2) format('woff2');
+    }
+
+    @font-face {
+      font-family: 'comic';
+      font-weight: bold;
+      src: url(./fonts/comicbd.woff2) format('woff2');
+    }
+
+    * { 
+      font-family: 'Comic Sans MS', 'comic', sans-serif; 
+      /* font-weight: bold; */
+      touch-action: none;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+    }
+
+    @keyframes panno {
+      from {
+        background-position: 0% 0%;
+        /* transform: translate(0px, 0px); */
+      }
+      to {
+        background-position: 100% -100%;
+        /* transform: translate(96px, 96px); */
+      }
+    }
+
+    body {
+      overflow: hidden;
+      touch-action: none;
+      width: 100%;
+      height: 100vh;
+
+      background-image: url("./images/Background/Green.png");
+      image-rendering: pixelated;
+      /* background-size: 96px 96px; */
+      background-repeat: repeat;
+      animation: panno linear 61s infinite;
+    }
+
+    .hidden {
+      opacity: 0;
+    }
+
+    nav {
+      z-index: 2;
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+
+    #restartButton {
+      /* margin-left: auto; */
+      display: block;
+      height: 42px;
+      image-rendering: pixelated;
+    }
+
+    #restartButton:hover {
+      animation: shiftDown 0.25s step-start;
+    }
+
+    #restartButton:active {
+      transform: translateY(3px);
+    }
+
+    @keyframes shiftDown {
+      to { transform: translateY(3px); } 
+    }
+
+    main {
+      width: 1024px;
+      height: 768px;
+      position: absolute;
+      font-size: 215px;
+      border: 3px solid black;
+      margin-top: auto;
+      margin-bottom: auto;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      image-rendering: auto;
+      /* transform-origin: center center; */
+    }
+
+    #numLeft {
+      position: absolute;
+      margin: 0 auto;
+      top: 0;
+      bottom: 0;
+      left: 61px;
+    }
+
+    #numRight {
+      position: absolute;
+      margin: 0 auto;
+      top: 0;
+      bottom: 0;
+      right: 61px;
+    }
+
+    #blank {
+      position: absolute;
+      margin: auto;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 193px;
+      height: 193px;
+      background-color: rgba(138, 43, 226, 0.4);
+      border: 7px solid blueviolet;
+      border-radius: 16px;
+    }
+
+    .highlight {
+      background-color: rgba(229, 143, 255, 0.658) !important;
+    }
+
+    #blank.completed {
+      animation: blank_completed 1s forwards;
+      background-color: blueviolet;
+    }
+    
+    @keyframes blank_completed {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
+    }
+
+    .option.completed {
+      background-color: rgba(138, 43, 226, 0.0);
+    }
+
+    .optionContainer {
+      width: 193px;
+      height: 193px;
+      margin: 0 17px;
+    }
+
+    .option {
+      background-color: blueviolet;
+      border-radius: 16px;
+      width: 193px;
+      height: 193px;
+    }
+
+    svg {
+      padding-top: 0.1em;
+      display: block;
+      user-select: none;
+    }
+
+    svg text {
+      text-anchor: middle;
+      dominant-baseline: middle;
+      fill: white;
+      stroke: black;
+      stroke-width: 13px;
+      stroke-linejoin: round;
+      paint-order: stroke;
+      user-select: none;
+    }
+
+    #options {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      position: absolute;
+      bottom: 25px;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+    }
+
+    #greaterThan, #lessThan, #equalTo {
+      position: relative;
+    }
+
+    #greaterThan svg, #lessThan svg {
+      position: absolute;
+      top: -5px;
+    }
+
+    #equalTo svg {
+      position: absolute;
+      top: -5px;
+      left: 5px;
+    }
+
+    #greaterThan svg text, #lessThan svg text {
+      font-size: 310px !important;
+      /* stroke-width: 7px !important; */
+    }
+
+    #lessThan svg {
+      transform: scale(-1, 1);
+    }
+
+    #equalTo svg text {
+      font-size: 310px !important;
+      /* stroke-width: 7px !important; */
+    }
+
+    .fruits {
+      width: 350px;
+      /* height: 230px; */
+      /* background-color: black; */
+      position: absolute;
+    }
+
+    #fruitsLeft, #secretFruitsLeft {
+      top: 20px;
+      left: 32px;
+    }
+    
+    #fruitsRight, #secretFruitsRight {
+      top: 20px;
+      right: 32px;
+    }
+
+    .row {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-evenly;
+      /* margin: 8px 0; */
+    }
+
+    #crocLeft {
+      z-index: 10;
+      position: absolute;
+      top: -49px;
+      left: 405px;
+      transform: rotate(-15deg);
+      width: 571px;
+      height: 571px;
+      background-repeat: no-repeat;
+      visibility: hidden;
+    }
+
+    #crocRight {
+      z-index: 10;
+      position: absolute;
+      top: -49px;
+      right: 405px;
+      transform: scale(-1, 1) rotate(-15deg) ;
+      width: 571px;
+      height: 571px;
+      background-repeat: no-repeat;
+      visibility: hidden;
+    }
+
+    #crocLeft.animated, #crocRight.animated {
+      visibility: visible;
+      animation: eat 1s linear 5;
+    }
+
+    @keyframes eat {
+      from {
+        background-image: url(./images/croc/croc2.svg);
+      }
+      to {
+        background-image: url(./images/croc/croc1.svg);
+      }
+    }
+
+    .fruit {
+      width: 32px;
+      height: 32px;
+      /* background-color: white; */
+      /* 50 ms per frame */
+      image-rendering: pixelated;
+      transform: scale(2.5);
+      margin: 17px 10px;
+      /* background-size: cover; */
+      background-position: 0 0;
+      background-repeat: no-repeat;
+    }
+
+    .apple {
+      background: url(./images/Fruits/Apple.png);
+      animation: sprite 850ms steps(17) infinite;
+    }
+
+    .banana {
+      background: url(./images/Fruits/Bananas.png);
+      animation: sprite 850ms steps(17) infinite;
+    }
+    
+    .cherry {
+      background: url(./images/Fruits/Cherries.png);
+      animation: sprite 850ms steps(17) infinite;
+    }
+    
+    .kiwi {
+      background: url(./images/Fruits/Kiwi.png);
+      animation: sprite 850ms steps(17) infinite;
+    }
+    
+    .melon {
+      background: url(./images/Fruits/Melon.png);
+      animation: sprite 850ms steps(17) infinite;
+    }
+    
+    .orange {
+      background: url(./images/Fruits/Orange.png);
+      animation: sprite 850ms steps(17) infinite;
+    }
+    
+    .pineapple {
+      background: url(./images/Fruits/Pineapple.png);
+      animation: sprite 850ms steps(17) infinite;
+    }
+    
+    .strawberry {
+      background: url(./images/Fruits/Strawberry.png);
+      animation: sprite 850ms steps(17) infinite;
+    }
+
+    @keyframes sprite {
+      from { background-position: 0px 0; }
+      to { background-position: -544px 0; }
+    }
+
+    .collected {
+      background: url(./images/Fruits/Collected.png);
+      animation: collected 300ms steps(6) forwards;
+    }
+
+    .collectedReverse {
+      background: url(./images/Fruits/Collected.png);
+      animation: collectedReverse 300ms steps(6) forwards;
+    }
+
+    @keyframes collected {
+      from { background-position: 0px 0; }
+      to { background-position: -192px 0; visibility: hidden; }
+    }
+
+    @keyframes collectedReverse {
+      from { background-position: -192px 0; }
+      to { background-position: 0px 0; visibility: hidden; }
+    }
+
+
+  </style>
+</head>
+<body>
+  <main>
+    <nav>
+      <img src="./images/Buttons/Restart.png" id="restartButton">
+    </nav>
+    <div id="crocLeft"></div>
+    <div id="crocRight"></div>
+
+    <div id="fruitsLeft" class="fruits">
+      <div class="row">
+        <div class="fruit apple"></div>
+        <div class="fruit banana"></div>
+        <div class="fruit cherry"></div>
+        <div class="fruit kiwi"></div>
+        <div class="fruit melon"></div>
+      </div>
+      <div class="row">
+        <div class="fruit orange"></div>
+        <div class="fruit pineapple"></div>
+        <div class="fruit strawberry"></div>
+        <div class="fruit apple"></div>
+        <div class="fruit apple"></div>
+      </div>
+      <div class="row">
+        <div class="fruit apple"></div>
+        <div class="fruit apple"></div>
+        <div class="fruit apple"></div>
+        <div class="fruit apple"></div>
+        <div class="fruit apple"></div>
+      </div>
+      <div class="row">
+        <div class="fruit apple"></div>
+        <div class="fruit apple"></div>
+        <div class="fruit apple"></div>
+        <div class="fruit apple"></div>
+        <div class="fruit apple"></div>
+      </div>
+    </div>
+    <div id="secretFruitsLeft" class="fruits">
+      <div class="row">
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+      </div>
+      <div class="row">
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+      </div>
+      <div class="row">
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+      </div>
+      <div class="row">
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+      </div>
+    </div>
+
+    <div id="fruitsRight" class="fruits">
+      <div class="row">
+        <div class="fruit collected"></div>
+        <div class="fruit collected"></div>
+        <div class="fruit collected"></div>
+        <div class="fruit collected"></div>
+        <div class="fruit collected"></div>
+      </div>
+      <div class="row">
+        <div class="fruit collected"></div>
+        <div class="fruit collected"></div>
+        <div class="fruit collected"></div>
+        <div class="fruit collected"></div>
+        <div class="fruit collected"></div>
+      </div>
+      <div class="row">
+        <div class="fruit collectedReverse"></div>
+        <div class="fruit collectedReverse"></div>
+        <div class="fruit collectedReverse"></div>
+        <div class="fruit collectedReverse"></div>
+        <div class="fruit collectedReverse"></div>
+      </div>
+      <div class="row">
+        <div class="fruit collectedReverse"></div>
+        <div class="fruit collectedReverse"></div>
+        <div class="fruit collectedReverse"></div>
+        <div class="fruit collectedReverse"></div>
+        <div class="fruit collectedReverse"></div>
+      </div>
+    </div>
+    <div id="secretFruitsRight" class="fruits">
+      <div class="row">
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+      </div>
+      <div class="row">
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+      </div>
+      <div class="row">
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+      </div>
+      <div class="row">
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+        <div class="fruit"></div>
+      </div>
+    </div>
+
+    <div id="numLeft" class="number">
+      <svg width="100%" height="100%"> <text x="50%" y="50%"> 17 </text> </svg>
+    </div>
+    <div id="numRight" class="number">
+      <svg width="100%" height="100%"> <text x="50%" y="50%"> 17 </text> </svg>
+    </div>
+    <div id="blank"></div>
+    <div id="options">
+      <div class="optionContainer">
+        <div id="lessThan" class="option">
+          <svg width="193px" height="193px"> <text x="50%" y="50%"> &gt; </text> </svg>
+        </div>
+      </div>
+      <div class="optionContainer">
+        <div id="greaterThan" class="option">
+          <svg width="193px" height="193px"> <text x="50%" y="50%"> &gt; </text> </svg>
+        </div>
+      </div>
+      <div class="optionContainer">
+        <div id="equalTo" class="option">
+          <svg width="193px" height="193px"> <text x="50%" y="50%"> = </text> </svg>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
