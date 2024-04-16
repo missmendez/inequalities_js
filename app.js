@@ -27,12 +27,12 @@ function makeDraggable(elem, isRightAnswer) {
   function convertToRelativeX(x) {
     // relative to #options's left
     let optionsDivRect = document.getElementById("options").getBoundingClientRect();
-    return x - optionsDivRect.left;
+    return (x - optionsDivRect.left) / factor;
   }
   function convertToRelativeY(y) {
     // relative to #options's top
     let optionsDivRect = document.getElementById("options").getBoundingClientRect();
-    return y - optionsDivRect.top;
+    return (y - optionsDivRect.top) / factor;
   }
   function isOverTheBlank(e) {
     let blankRect = document.getElementById("blank").getBoundingClientRect();
@@ -197,6 +197,7 @@ let leftFruit = undefined;
 let rightFruit = undefined;
 let answer = undefined;
 let timeouts = [];
+let factor = 1.0;
 
 function playAnimation() {
   if (answer == document.getElementById("lessThan")) {
@@ -411,13 +412,13 @@ function resize() {
   const HEIGHT = 768;
   let winWidth = window.innerWidth;
   let winHeight = window.innerHeight;
-  let factor = Math.min(winWidth / WIDTH, winHeight / HEIGHT);
+  factor = Math.min(winWidth / WIDTH, winHeight / HEIGHT);
   let main = document.querySelector("main");
   let mainRect = main.getBoundingClientRect();
   main.style.transform = `scale(${factor}, ${factor})`;
-  main.style.marginLeft = `${(winWidth - mainRect.width/factor) / 2}px`;
+  main.style.marginLeft = `${(winWidth - WIDTH*factor) / 2}px`;
 
-  let bgSize = Math.max(winWidth, winHeight)/32*2;
+  let bgSize = Math.min(winWidth, winHeight)/32*3.2;
   document.body.style.backgroundSize = `${bgSize}px ${bgSize}px`;
 }
 

@@ -88,15 +88,15 @@
       height: 768px;
       position: absolute;
       font-size: 215px;
-      border: 3px solid black;
-      margin-top: auto;
+      /* border: 3px solid black; */
+      /* margin-top: auto; */
       margin-bottom: auto;
       top: 0;
       bottom: 0;
       left: 0;
       right: 0;
       image-rendering: auto;
-      /* transform-origin: center center; */
+      transform-origin: top left;
     }
 
     #numLeft {
@@ -271,14 +271,14 @@
 
     #crocLeft.animated, #crocRight.animated {
       visibility: visible;
-      animation: eat 1s linear 5;
+      animation: eat 1s steps(1) 5;
     }
 
     @keyframes eat {
-      from {
+      0% {
         background-image: url(./images/croc/croc2.svg);
       }
-      to {
+      50% {
         background-image: url(./images/croc/croc1.svg);
       }
     }
