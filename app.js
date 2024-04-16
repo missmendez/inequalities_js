@@ -417,9 +417,11 @@ function resize() {
   let mainRect = main.getBoundingClientRect();
   main.style.transform = `scale(${factor}, ${factor})`;
   main.style.marginLeft = `${(winWidth - WIDTH*factor) / 2}px`;
+  main.style.marginTop = `${(winHeight - HEIGHT*factor) / 2}px`;
 
-  let bgSize = Math.min(winWidth, winHeight)/32*3.2;
-  document.body.style.backgroundSize = `${bgSize}px ${bgSize}px`;
+  // let bgSize = Math.min(winWidth, winHeight)/32*3;
+  // this doesn't need to change now thanks to the resizing!
+  // main.style.backgroundSize = `${bgSize}px ${bgSize}px`;
 }
 
 document.addEventListener("DOMContentLoaded", (e) => {
